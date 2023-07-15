@@ -1,13 +1,25 @@
 package main
 
 import (
+	"backend/config"
 	"backend/pkg/app"
 	"log"
 )
 
 func main() {
-	err := app.Run()
+	// Load config
+	config.Load()
+
+	// Setup App
+	myApp, err := app.NewApplication()
 	if err != nil {
-		log.Fatalf("failed to start the application: %s", err.Error())
+		log.Fatalf("failed to setup the application: %s", err.Error())
+		return
+	}
+
+	// Run server
+	err = myApp.Run()
+	if err != nil {
+		log.Fatalf("failed to start the server: %s", err.Error())
 	}
 }

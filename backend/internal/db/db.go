@@ -9,12 +9,8 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-var DB *sql.DB
-
-func SetupDB() error {
-	var err error
-
-	pgConString := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+func SetupDB() (*sql.DB, error) {
+	pgConString := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		config.DBHost,
 		config.DBPort,
 		config.DBUser,
@@ -22,17 +18,17 @@ func SetupDB() error {
 		config.DBName,
 	)
 
-	DB, err = sql.Open("pgx", pgConString)
+	db, err := sql.Open("pgx", pgConString)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	err = DB.Ping()
+	err = db.Ping()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	log.Println("Database connection successfully established")
 
-	return nil
+	return db, nil
 }

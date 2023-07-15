@@ -5,8 +5,8 @@ import (
 	"testing"
 )
 
-func TestSetupApp(t *testing.T) {
-	err := app.SetupApp()
+func TestNewApplication(t *testing.T) {
+	_, err := app.NewApplication()
 	if err != nil {
 		t.Errorf("failed to setup app: %s", err.Error())
 	}

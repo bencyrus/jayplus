@@ -6,11 +6,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func SetupRouter() *mux.Router {
+func NewRouter() *mux.Router {
 	r := mux.NewRouter()
-
-	// Setup routes
 	routes.AuthRoutes(r)
-
 	return r
 }
