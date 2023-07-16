@@ -6,11 +6,9 @@
 ├── go.mod
 ├── pkg
 │   ├── app
-│   │   ├── router.go
-│   │   ├── server.go
-│   │   ├── setup.go
-│   │   └── tests
-│   │       └── app_test.go
+│   │   ├── application.go
+│   │   └── router.go
+│   │
 │   ├── authentication
 │   │   ├── handlers
 │   │   │   ├── authHandler.go
@@ -26,10 +24,10 @@
 │   │   │       └── authMiddleware_test.go
 │   │   └── repository
 │   │       ├── authRepository.go
-│   │       ├── postgres
-│   │       │   ├── postgresAuthRepository.go
-│   │       │   └── tests
-│   │       │       └── postgresAuthRepository_test.go
+│   │       └── postgres
+│   │           ├── postgresAuthRepository.go
+│   │           └── tests
+│   │               └── postgresAuthRepository_test.go
 │   ├── booking
 │   │   ├── handlers
 │   │   │   ├── customerHandlers.go
@@ -57,10 +55,10 @@
 │   │       │   ├── postgresBookingRepository.go
 │   │       │   └── tests
 │   │       │       └── postgresBookingRepository_test.go
-│   ├── messaging  # Twilio package
-│   │   ├── smsService.go
-│   │   └── tests
-│   │       └── smsService_test.go
+│   └── messaging  # Twilio package
+│       ├── smsService.go
+│       └── tests
+│           └── smsService_test.go
 ├── models
 │   ├── booking.go
 │   ├── service.go
@@ -87,3 +85,4 @@
         ├── migrations
         └── tests
             └── db_test.go
+
