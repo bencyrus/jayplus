@@ -7,7 +7,7 @@ import (
 )
 
 func TestLoad(t *testing.T) {
-	// Define test cases
+	// test cases
 	cases := []struct {
 		Name               string
 		EnvVars            map[string]string
@@ -75,7 +75,6 @@ func TestLoad(t *testing.T) {
 			ExpectedDBPassword: "test_password",
 			ExpectedPort:       "",
 		},
-		// Add more cases if needed
 	}
 
 	// Iterate over test cases
