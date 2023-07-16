@@ -7,9 +7,5 @@ import (
 )
 
 func AuthRoutes(r *mux.Router) {
-	r.HandleFunc("/login", handlers.LoginHandler).Methods("POST")
-	// other routes here
-
-	// dummy get route
-	r.HandleFunc("/test", handlers.TestHandler).Methods("GET")
+	r.HandleFunc("/login", handlers.LoginHandler).Methods("GET")
 }
