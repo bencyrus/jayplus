@@ -64,7 +64,7 @@ func TestLoadAppConfig(t *testing.T) {
 		{
 			Name: "Port set",
 			EnvVars: map[string]string{
-				"PORT": "8080",
+				"SERVER_PORT": "8080",
 			},
 			ExpectedPort: "8080",
 		},

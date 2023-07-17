@@ -3,6 +3,7 @@ package app
 import (
 	"backend/config"
 	"backend/internal/db"
+	"backend/pkg/authentication"
 	"database/sql"
 	"fmt"
 	"net/http"
@@ -13,6 +14,7 @@ import (
 type Application struct {
 	DB     *sql.DB
 	Router *mux.Router
+	Auth   *authentication.Auth
 }
 
 func NewApplication() (*Application, error) {
@@ -25,10 +27,14 @@ func NewApplication() (*Application, error) {
 	// Setup Router
 	r := NewRouter()
 
+	// Setup Authentication
+	auth := authentication.SetupAuth()
+
 	// Return new Application
 	return &Application{
 		DB:     db,
 		Router: r,
+		Auth:   auth,
 	}, nil
 }
 

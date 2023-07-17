@@ -1,6 +1,7 @@
 package authentication
 
 import (
+	"backend/config"
 	"fmt"
 	"time"
 
@@ -33,7 +34,24 @@ type JWTClaims struct {
 	jwt.RegisteredClaims
 }
 
+func SetupAuth() *Auth {
+	return &Auth{
+		Issuer:             config.JWTIssuer,
+		Audience:           config.JWTAudience,
+		Secret:             config.JWTSecret,
+		AccessTokenExpiry:  config.AccessTokenExpiry,
+		RefreshTokenExpiry: config.RefreshTokenExpiry,
+		CookieDomain:       config.JWTCookieDomain,
+		CookiePath:         config.JWTCookiePath,
+		CookieName:         config.JWTCookieName,
+	}
+}
+
 func (j *Auth) GenerateTokenPair(user *JWTUser) (JWTTokenPair, error) {
+	if user == nil {
+		return JWTTokenPair{}, fmt.Errorf("error generating token pair: user is nil")
+	}
+
 	// create access token
 	accessToken := jwt.New(jwt.SigningMethodHS256)
 
