@@ -158,7 +158,7 @@ func checkDBConfig(t *testing.T, tc struct {
 		config.DBName != tc.ExpectedDBName ||
 		config.DBUser != tc.ExpectedDBUser ||
 		config.DBPassword != tc.ExpectedDBPassword {
-		t.Fatalf("Loaded config does not match expected config")
+		t.Fatalf("Loaded DB config does not match expected config")
 	}
 }
 
@@ -168,7 +168,7 @@ func checkAppConfig(t *testing.T, tc struct {
 	ExpectedPort string
 }) {
 	if config.Port != tc.ExpectedPort {
-		t.Fatalf("Loaded config does not match expected config")
+		t.Fatalf("Loaded App config does not match expected config")
 	}
 }
 
@@ -192,6 +192,6 @@ func checkAuthConfig(t *testing.T, tc struct {
 		config.JWTCookieDomain != tc.ExpectedJWTCookieDomain ||
 		config.JWTCookiePath != tc.ExpectedJWTCookiePath ||
 		config.JWTCookieName != tc.ExpectedJWTCookieName {
-		t.Fatalf("Loaded config does not match expected config")
+		t.Fatalf("Loaded Auth config does not match expected config")
 	}
 }
