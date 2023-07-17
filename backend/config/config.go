@@ -39,7 +39,7 @@ func LoadDBConfig() {
 }
 
 func LoadAppConfig() {
-	Port = os.Getenv("PORT")
+	Port = os.Getenv("SERVER_PORT")
 }
 
 func LoadAuthConfig() {
