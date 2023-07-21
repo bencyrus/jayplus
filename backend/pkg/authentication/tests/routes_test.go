@@ -1,15 +1,28 @@
 package tests
 
 import (
-	"backend/pkg/authentication/routes"
+	"backend/pkg/authentication"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/gorilla/mux"
 )
 
 func TestAuthRoutes(t *testing.T) {
+	// Create an instance of Auth for testing
+	auth := &authentication.Auth{
+		Issuer:             "testIssuer",
+		Audience:           "testAudience",
+		Secret:             "testSecret",
+		AccessTokenExpiry:  1 * time.Hour,
+		RefreshTokenExpiry: 24 * time.Hour,
+		CookieDomain:       "localhost",
+		CookiePath:         "/",
+		CookieName:         "refresh_token",
+	}
+
 	cases := []struct {
 		name           string
 		route          string
@@ -24,7 +37,7 @@ func TestAuthRoutes(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			r := mux.NewRouter()
-			routes.AuthRoutes(r)
+			authentication.AuthRoutes(r, auth) // Pass the auth instance
 
 			req, _ := http.NewRequest(tc.method, tc.route, nil)
 			response := httptest.NewRecorder()

@@ -1,8 +1,8 @@
 package authentication
 
 import (
-	"backend/config"
 	"fmt"
+	"net/http"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -34,20 +34,20 @@ type JWTClaims struct {
 	jwt.RegisteredClaims
 }
 
-func SetupAuth() *Auth {
+func NewAuth(a Auth) *Auth {
 	return &Auth{
-		Issuer:             config.JWTIssuer,
-		Audience:           config.JWTAudience,
-		Secret:             config.JWTSecret,
-		AccessTokenExpiry:  config.AccessTokenExpiry,
-		RefreshTokenExpiry: config.RefreshTokenExpiry,
-		CookieDomain:       config.JWTCookieDomain,
-		CookiePath:         config.JWTCookiePath,
-		CookieName:         config.JWTCookieName,
+		Issuer:             a.Issuer,
+		Audience:           a.Audience,
+		Secret:             a.Secret,
+		AccessTokenExpiry:  a.AccessTokenExpiry,
+		RefreshTokenExpiry: a.RefreshTokenExpiry,
+		CookieDomain:       a.CookieDomain,
+		CookiePath:         a.CookiePath,
+		CookieName:         a.CookieName,
 	}
 }
 
-func (j *Auth) GenerateTokenPair(user *JWTUser) (JWTTokenPair, error) {
+func (a *Auth) GenerateTokenPair(user *JWTUser) (JWTTokenPair, error) {
 	if user == nil {
 		return JWTTokenPair{}, fmt.Errorf("error generating token pair: user is nil")
 	}
@@ -58,13 +58,13 @@ func (j *Auth) GenerateTokenPair(user *JWTUser) (JWTTokenPair, error) {
 	accessTokenClaims := accessToken.Claims.(jwt.MapClaims)
 	accessTokenClaims["name"] = fmt.Sprintf("%s %s", user.FirstName, user.LastName)
 	accessTokenClaims["sub"] = fmt.Sprint(user.ID)
-	accessTokenClaims["aud"] = j.Audience
-	accessTokenClaims["iss"] = j.Issuer
+	accessTokenClaims["aud"] = a.Audience
+	accessTokenClaims["iss"] = a.Issuer
 	accessTokenClaims["iat"] = time.Now().UTC().Unix()
 	accessTokenClaims["typ"] = "JWT"
-	accessTokenClaims["exp"] = time.Now().UTC().Add(j.AccessTokenExpiry).Unix()
+	accessTokenClaims["exp"] = time.Now().UTC().Add(a.AccessTokenExpiry).Unix()
 
-	signedAccessToken, err := accessToken.SignedString([]byte(j.Secret))
+	signedAccessToken, err := accessToken.SignedString([]byte(a.Secret))
 	if err != nil {
 		return JWTTokenPair{}, fmt.Errorf("error signing access token: %w", err)
 	}
@@ -75,9 +75,9 @@ func (j *Auth) GenerateTokenPair(user *JWTUser) (JWTTokenPair, error) {
 	refreshTokenClaims := refreshToken.Claims.(jwt.MapClaims)
 	refreshTokenClaims["sub"] = fmt.Sprint(user.ID)
 	refreshTokenClaims["iat"] = time.Now().UTC().Unix()
-	refreshTokenClaims["exp"] = time.Now().UTC().Add(j.RefreshTokenExpiry).Unix()
+	refreshTokenClaims["exp"] = time.Now().UTC().Add(a.RefreshTokenExpiry).Unix()
 
-	signedRefreshToken, err := refreshToken.SignedString([]byte(j.Secret))
+	signedRefreshToken, err := refreshToken.SignedString([]byte(a.Secret))
 	if err != nil {
 		return JWTTokenPair{}, fmt.Errorf("error signing refresh token: %w", err)
 	}
@@ -86,4 +86,33 @@ func (j *Auth) GenerateTokenPair(user *JWTUser) (JWTTokenPair, error) {
 		AccessToken:  signedAccessToken,
 		RefreshToken: signedRefreshToken,
 	}, nil
+}
+
+func (a *Auth) GetRefreshCookie(refreshToken string) *http.Cookie {
+	return &http.Cookie{
+		Name:     a.CookieName,
+		Value:    refreshToken,
+		Path:     a.CookiePath,
+		Expires:  time.Now().UTC().Add(a.RefreshTokenExpiry),
+		MaxAge:   int(a.RefreshTokenExpiry.Seconds()),
+		SameSite: http.SameSiteStrictMode,
+		Domain:   a.CookieDomain,
+		HttpOnly: true,
+		Secure:   true,
+	}
+}
+
+func (a *Auth) GetExpiredRefreshCookie() *http.Cookie {
+	return &http.Cookie{
+		Name:     a.CookieName,
+		Value:    "",
+		Path:     a.CookiePath,
+		Expires:  time.Unix(0, 0),
+		MaxAge:   -1,
+		SameSite: http.SameSiteStrictMode,
+		Domain:   a.CookieDomain,
+		HttpOnly: true,
+		Secure:   true,
+	}
+
 }

@@ -24,18 +24,28 @@ func NewApplication() (*Application, error) {
 		return nil, err
 	}
 
-	// Setup Router
-	r := NewRouter()
+	// Setup Application
+	app := &Application{
+		DB: db,
+	}
 
 	// Setup Authentication
-	auth := authentication.SetupAuth()
+	app.Auth = authentication.NewAuth(authentication.Auth{
+		Issuer:             config.JWTIssuer,
+		Audience:           config.JWTAudience,
+		Secret:             config.JWTSecret,
+		AccessTokenExpiry:  config.AccessTokenExpiry,
+		RefreshTokenExpiry: config.RefreshTokenExpiry,
+		CookieDomain:       config.JWTCookieDomain,
+		CookiePath:         config.JWTCookiePath,
+		CookieName:         config.JWTCookieName,
+	})
+
+	// Setup Router
+	app.Router = app.NewRouter()
 
 	// Return new Application
-	return &Application{
-		DB:     db,
-		Router: r,
-		Auth:   auth,
-	}, nil
+	return app, nil
 }
 
 func (app *Application) Run() error {

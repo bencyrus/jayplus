@@ -1,13 +1,26 @@
 package tests
 
 import (
-	"backend/pkg/authentication/handlers"
+	"backend/pkg/authentication"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 )
 
 func TestLoginHandler(t *testing.T) {
+	// Create an instance of Auth for testing
+	auth := &authentication.Auth{
+		Issuer:             "testIssuer",
+		Audience:           "testAudience",
+		Secret:             "testSecret",
+		AccessTokenExpiry:  1 * time.Hour,
+		RefreshTokenExpiry: 24 * time.Hour,
+		CookieDomain:       "localhost",
+		CookiePath:         "/",
+		CookieName:         "refresh_token",
+	}
+
 	cases := []struct {
 		name           string
 		method         string
@@ -25,7 +38,7 @@ func TestLoginHandler(t *testing.T) {
 			}
 
 			rr := httptest.NewRecorder()
-			handler := http.HandlerFunc(handlers.LoginHandler)
+			handler := http.HandlerFunc(auth.LoginHandler) // Use the auth instance
 
 			handler.ServeHTTP(rr, req)
 

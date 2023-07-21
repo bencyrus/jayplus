@@ -1,13 +1,13 @@
 package app
 
 import (
-	"backend/pkg/authentication/routes"
+	"backend/pkg/authentication"
 
 	"github.com/gorilla/mux"
 )
 
-func NewRouter() *mux.Router {
+func (app *Application) NewRouter() *mux.Router {
 	r := mux.NewRouter()
-	routes.AuthRoutes(r)
+	authentication.AuthRoutes(r, app.Auth)
 	return r
 }
