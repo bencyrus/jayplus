@@ -2,8 +2,8 @@ package app
 
 import (
 	"backend/config"
+	"backend/internal/authentication"
 	"backend/internal/db"
-	"backend/pkg/authentication"
 	"database/sql"
 	"fmt"
 	"net/http"

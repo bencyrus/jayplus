@@ -1,7 +1,7 @@
 package app
 
 import (
-	"backend/pkg/authentication"
+	"backend/internal/authentication"
 
 	"github.com/gorilla/mux"
 )
