@@ -10,24 +10,21 @@
 │   │   └── router.go
 │   │
 │   ├── authentication
-│   │   ├── handlers
-│   │   │   ├── authHandler.go
-│   │   │   └── tests
-│   │   │       └── authHandler_test.go
-│   │   ├── routes
-│   │   │   ├── authRoutes.go
-│   │   │   └── tests
-│   │   │       └── authRoutes_test.go
-│   │   ├── middlewares
-│   │   │   ├── authMiddleware.go
-│   │   │   └── tests
-│   │   │       └── authMiddleware_test.go
-│   │   └── repository
-│   │       ├── authRepository.go
-│   │       └── postgres
-│   │           ├── postgresAuthRepository.go
-│   │           └── tests
-│   │               └── postgresAuthRepository_test.go
+│   │   ├── auth.go
+│   │   ├── handlers.go
+│   │   ├── routes.go
+│   │   ├── middlewares.go
+│   │   ├── repository
+│   │   │   ├── authRepository.go
+│   │   │   ├── authRepository_test.go
+│   │   │   └── postgres
+│   │   │       ├── postgresAuthRepository.go
+│   │   │       └── postgresAuthRepository_test.go
+│   │   └── tests
+│   │       ├── auth_test.go
+│   │       ├── handlers_test.go
+│   │       ├── routes_test.go
+│   │       └── middlewares_test.go
 │   ├── booking
 │   │   ├── handlers
 │   │   │   ├── customerHandlers.go
@@ -67,16 +64,7 @@
 │   ├── payment.go
 │   ├── employee.go
 │   ├── analytics.go
-│   ├── user.go
-│   └── tests
-│       ├── booking_test.go
-│       ├── service_test.go
-│       ├── vehicle_test.go
-│       ├── invoice_test.go
-│       ├── payment_test.go
-│       ├── employee_test.go
-│       ├── analytics_test.go
-│       └── user_test.go
+│   └── user.go
 ├── config
 │   └── config.go
 └── internal
