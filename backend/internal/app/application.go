@@ -30,7 +30,7 @@ func NewApplication() (*Application, error) {
 	}
 
 	// Setup Authentication
-	app.Auth = authentication.NewAuth(authentication.Auth{
+	app.Auth = authentication.InitAuth(authentication.Auth{
 		Issuer:             config.JWTIssuer,
 		Audience:           config.JWTAudience,
 		Secret:             config.JWTSecret,

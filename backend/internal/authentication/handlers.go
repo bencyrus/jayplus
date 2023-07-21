@@ -13,14 +13,14 @@ func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 func (a *Auth) Authenticate(w http.ResponseWriter, r *http.Request) {
 	// create JWT user
-	user := JWTUser{
+	user := AuthUser{
 		ID:        1,
 		FirstName: "John",
 		LastName:  "Doe",
 	}
 
 	// generate JWT tokens
-	tokenPair, err := a.GenerateTokenPair(&user)
+	tokenPair, err := a.GenerateSignedTokenPair(&user)
 	if err != nil {
 		log.Fatalf("Error generating token pair: %v", err)
 	}

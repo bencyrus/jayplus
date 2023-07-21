@@ -19,7 +19,7 @@ type Auth struct {
 	CookieName         string        `json:"cookie_name"`
 }
 
-type JWTUser struct {
+type AuthUser struct {
 	ID        int64  `json:"id"`
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
@@ -34,7 +34,7 @@ type JWTClaims struct {
 	jwt.RegisteredClaims
 }
 
-func NewAuth(a Auth) *Auth {
+func InitAuth(a Auth) *Auth {
 	return &Auth{
 		Issuer:             a.Issuer,
 		Audience:           a.Audience,
@@ -47,7 +47,7 @@ func NewAuth(a Auth) *Auth {
 	}
 }
 
-func (a *Auth) GenerateTokenPair(user *JWTUser) (JWTTokenPair, error) {
+func (a *Auth) GenerateSignedTokenPair(user *AuthUser) (JWTTokenPair, error) {
 	if user == nil {
 		return JWTTokenPair{}, fmt.Errorf("error generating token pair: user is nil")
 	}
