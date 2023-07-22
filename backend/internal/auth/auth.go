@@ -1,11 +1,14 @@
-package authentication
+package auth
 
 import (
+	"backend/models"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Auth struct {
@@ -34,7 +37,7 @@ type JWTClaims struct {
 	jwt.RegisteredClaims
 }
 
-func InitAuth(a Auth) *Auth {
+func (a *Auth) InitAuth(auth Auth) *Auth {
 	return &Auth{
 		Issuer:             a.Issuer,
 		Audience:           a.Audience,
@@ -115,4 +118,19 @@ func (a *Auth) GetExpiredRefreshCookie() *http.Cookie {
 		Secure:   true,
 	}
 
+}
+
+// password matches
+func PasswordMatches(user *models.User, password string) (bool, error) {
+	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	if err != nil {
+		switch {
+		case errors.Is(err, bcrypt.ErrMismatchedHashAndPassword):
+			return false, nil
+		default:
+			return false, err
+		}
+	}
+
+	return true, nil
 }
