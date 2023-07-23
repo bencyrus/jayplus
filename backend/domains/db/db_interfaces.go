@@ -1,8 +1,6 @@
 package db
 
-import (
-	"backend/models"
-)
+import "backend/models"
 
 type DBInterface interface {
 	SetupDB() error

@@ -1,12 +1,13 @@
 package auth
 
 import (
-	"backend/internal/db"
+	authDomain "backend/domains/auth"
+	dbDomain "backend/domains/db"
 
 	"github.com/gorilla/mux"
 )
 
-func AuthRoutes(r *mux.Router, auth AuthInterface, db db.DBInterface) {
+func AuthRoutes(r *mux.Router, auth authDomain.AuthInterface, db dbDomain.DBInterface) {
 	r.HandleFunc("/login", auth.LoginHandler).Methods("GET")
 	r.HandleFunc("/authenticate", auth.Authenticate(db)).Methods("POST")
 }

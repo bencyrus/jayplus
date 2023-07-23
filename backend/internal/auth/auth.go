@@ -1,58 +1,41 @@
 package auth
 
 import (
+	"backend/config"
 	"backend/models"
 	"errors"
 	"fmt"
 	"net/http"
 	"time"
 
+	authDomain "backend/domains/auth"
+
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type Auth struct {
-	Issuer             string        `json:"issuer"`
-	Audience           string        `json:"audience"`
-	Secret             string        `json:"secret"`
-	AccessTokenExpiry  time.Duration `json:"access_token_expiry"`
-	RefreshTokenExpiry time.Duration `json:"refresh_token_expiry"`
-	CookieDomain       string        `json:"cookie_domain"`
-	CookiePath         string        `json:"cookie_path"`
-	CookieName         string        `json:"cookie_name"`
+	authDomain.Auth
 }
 
-type AuthUser struct {
-	ID        int64  `json:"id"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-}
-
-type JWTTokenPair struct {
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
-}
-
-type JWTClaims struct {
-	jwt.RegisteredClaims
-}
-
-func (a *Auth) InitAuth(auth Auth) *Auth {
+func NewAuth() *Auth {
 	return &Auth{
-		Issuer:             a.Issuer,
-		Audience:           a.Audience,
-		Secret:             a.Secret,
-		AccessTokenExpiry:  a.AccessTokenExpiry,
-		RefreshTokenExpiry: a.RefreshTokenExpiry,
-		CookieDomain:       a.CookieDomain,
-		CookiePath:         a.CookiePath,
-		CookieName:         a.CookieName,
+		authDomain.Auth{
+			Issuer:             config.JWTIssuer,
+			Audience:           config.JWTAudience,
+			Secret:             config.JWTSecret,
+			AccessTokenExpiry:  config.AccessTokenExpiry,
+			RefreshTokenExpiry: config.RefreshTokenExpiry,
+			CookieDomain:       config.JWTCookieDomain,
+			CookiePath:         config.JWTCookiePath,
+			CookieName:         config.JWTCookieName,
+		},
 	}
 }
 
-func (a *Auth) GenerateSignedTokenPair(user *AuthUser) (JWTTokenPair, error) {
+func (a *Auth) GenerateSignedTokenPair(user *authDomain.AuthUser) (authDomain.JWTTokenPair, error) {
 	if user == nil {
-		return JWTTokenPair{}, fmt.Errorf("error generating token pair: user is nil")
+		return authDomain.JWTTokenPair{}, fmt.Errorf("error generating token pair: user is nil")
 	}
 
 	// create access token
@@ -69,7 +52,7 @@ func (a *Auth) GenerateSignedTokenPair(user *AuthUser) (JWTTokenPair, error) {
 
 	signedAccessToken, err := accessToken.SignedString([]byte(a.Secret))
 	if err != nil {
-		return JWTTokenPair{}, fmt.Errorf("error signing access token: %w", err)
+		return authDomain.JWTTokenPair{}, fmt.Errorf("error signing access token: %w", err)
 	}
 
 	// create refresh token
@@ -82,10 +65,10 @@ func (a *Auth) GenerateSignedTokenPair(user *AuthUser) (JWTTokenPair, error) {
 
 	signedRefreshToken, err := refreshToken.SignedString([]byte(a.Secret))
 	if err != nil {
-		return JWTTokenPair{}, fmt.Errorf("error signing refresh token: %w", err)
+		return authDomain.JWTTokenPair{}, fmt.Errorf("error signing refresh token: %w", err)
 	}
 
-	return JWTTokenPair{
+	return authDomain.JWTTokenPair{
 		AccessToken:  signedAccessToken,
 		RefreshToken: signedRefreshToken,
 	}, nil

@@ -1,11 +1,13 @@
 package auth
 
 import (
-	"backend/internal/db"
+	"backend/domains/db"
 	"backend/utils"
 	"errors"
 	"log"
 	"net/http"
+
+	authDomain "backend/domains/auth"
 )
 
 func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
@@ -40,7 +42,7 @@ func (a *Auth) Authenticate(db db.DBInterface) func(http.ResponseWriter, *http.R
 		}
 
 		// create JWT user
-		u := AuthUser{
+		u := authDomain.AuthUser{
 			ID:        user.ID,
 			FirstName: user.FirstName,
 			LastName:  user.LastName,

@@ -2,6 +2,8 @@ package app
 
 import (
 	"backend/config"
+	authDomain "backend/domains/auth"
+	dbDomain "backend/domains/db"
 	"backend/internal/auth"
 	"backend/internal/db"
 	"fmt"
@@ -11,18 +13,28 @@ import (
 )
 
 type App struct {
-	DB     db.DBInterface
+	DB     dbDomain.DBInterface
 	Router *mux.Router
-	Auth   auth.AuthInterface
+	Auth   authDomain.AuthInterface
 }
 
-func InitApp(db db.DBInterface, auth auth.AuthInterface) (*App, error) {
-	app := &App{
-		DB:   db,
-		Auth: auth,
+func NewApp() (*App, error) {
+	// Setup DB
+	dbInstance := &db.DB{}
+	err := dbInstance.SetupDB()
+	if err != nil {
+		return nil, fmt.Errorf("failed to setup the database: %w", err)
 	}
 
-	app.Router = app.InitRouter()
+	// Setup Authentication
+	authInstance := auth.NewAuth()
+
+	// Setup App
+	app := &App{
+		DB:     dbInstance,
+		Auth:   authInstance,
+		Router: mux.NewRouter(),
+	}
 
 	return app, nil
 }
