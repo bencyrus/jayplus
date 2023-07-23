@@ -10,5 +10,5 @@ type AuthInterface interface {
 	GetRefreshCookie(refreshToken string) *http.Cookie
 	GetExpiredRefreshCookie() *http.Cookie
 	LoginHandler(w http.ResponseWriter, r *http.Request)
-	Authenticate(db db.DBInterface) func(http.ResponseWriter, *http.Request)
+	Authenticate(w http.ResponseWriter, r *http.Request, db db.DBInterface)
 }
