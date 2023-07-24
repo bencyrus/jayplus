@@ -2,20 +2,21 @@ package app
 
 import (
 	"backend/config"
-	authDomain "backend/domains/auth"
-	dbDomain "backend/domains/db"
 	"backend/internal/auth"
 	"backend/internal/db"
 	"fmt"
 	"net/http"
 
+	authContracts "backend/contracts/auth"
+	dbContracts "backend/contracts/db"
+
 	"github.com/gorilla/mux"
 )
 
 type App struct {
-	DB     dbDomain.DBInterface
+	DB     dbContracts.DBInterface
 	Router *mux.Router
-	Auth   authDomain.AuthInterface
+	Auth   authContracts.AuthInterface
 }
 
 func NewApp() (*App, error) {

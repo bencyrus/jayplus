@@ -1,13 +1,13 @@
 package auth
 
 import (
-	"backend/domains/db"
 	"backend/utils"
 	"errors"
 	"log"
 	"net/http"
 
-	authDomain "backend/domains/auth"
+	authContracts "backend/contracts/auth"
+	dbContracts "backend/contracts/db"
 )
 
 func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
@@ -16,7 +16,7 @@ func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("login handler"))
 }
 
-func (a *Auth) Authenticate(w http.ResponseWriter, r *http.Request, db db.DBInterface) {
+func (a *Auth) Authenticate(w http.ResponseWriter, r *http.Request, db dbContracts.DBInterface) {
 	var reqPayload struct {
 		Email    string `json:"email"`
 		Password string `json:"password"`
@@ -41,7 +41,7 @@ func (a *Auth) Authenticate(w http.ResponseWriter, r *http.Request, db db.DBInte
 	}
 
 	// create JWT user
-	u := authDomain.AuthUser{
+	u := authContracts.AuthUser{
 		ID:        user.ID,
 		FirstName: user.FirstName,
 		LastName:  user.LastName,

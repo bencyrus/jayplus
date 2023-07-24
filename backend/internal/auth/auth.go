@@ -8,19 +8,19 @@ import (
 	"net/http"
 	"time"
 
-	authDomain "backend/domains/auth"
+	authContracts "backend/contracts/auth"
 
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type Auth struct {
-	authDomain.Auth
+	authContracts.Auth
 }
 
 func NewAuth() *Auth {
 	return &Auth{
-		authDomain.Auth{
+		authContracts.Auth{
 			Issuer:             config.JWTIssuer,
 			Audience:           config.JWTAudience,
 			Secret:             config.JWTSecret,
@@ -33,9 +33,9 @@ func NewAuth() *Auth {
 	}
 }
 
-func (a *Auth) generateSignedTokenPair(user *authDomain.AuthUser) (authDomain.JWTTokenPair, error) {
+func (a *Auth) generateSignedTokenPair(user *authContracts.AuthUser) (authContracts.JWTTokenPair, error) {
 	if user == nil {
-		return authDomain.JWTTokenPair{}, fmt.Errorf("error generating token pair: user is nil")
+		return authContracts.JWTTokenPair{}, fmt.Errorf("error generating token pair: user is nil")
 	}
 
 	// create access token
@@ -52,7 +52,7 @@ func (a *Auth) generateSignedTokenPair(user *authDomain.AuthUser) (authDomain.JW
 
 	signedAccessToken, err := accessToken.SignedString([]byte(a.Secret))
 	if err != nil {
-		return authDomain.JWTTokenPair{}, fmt.Errorf("error signing access token: %w", err)
+		return authContracts.JWTTokenPair{}, fmt.Errorf("error signing access token: %w", err)
 	}
 
 	// create refresh token
@@ -65,10 +65,10 @@ func (a *Auth) generateSignedTokenPair(user *authDomain.AuthUser) (authDomain.JW
 
 	signedRefreshToken, err := refreshToken.SignedString([]byte(a.Secret))
 	if err != nil {
-		return authDomain.JWTTokenPair{}, fmt.Errorf("error signing refresh token: %w", err)
+		return authContracts.JWTTokenPair{}, fmt.Errorf("error signing refresh token: %w", err)
 	}
 
-	return authDomain.JWTTokenPair{
+	return authContracts.JWTTokenPair{
 		AccessToken:  signedAccessToken,
 		RefreshToken: signedRefreshToken,
 	}, nil
