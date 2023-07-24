@@ -31,10 +31,10 @@ func NewApp() (*App, error) {
 
 	// Setup App
 	app := &App{
-		DB:     dbInstance,
-		Auth:   authInstance,
-		Router: mux.NewRouter(),
+		DB:   dbInstance,
+		Auth: authInstance,
 	}
+	app.Router = app.SetupRouter()
 
 	return app, nil
 }
