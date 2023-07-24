@@ -25,12 +25,12 @@ var (
 )
 
 func Load() {
-	LoadDBConfig()
-	LoadAppConfig()
-	LoadAuthConfig()
+	loadDBConfig()
+	loadAppConfig()
+	loadAuthConfig()
 }
 
-func LoadDBConfig() {
+func loadDBConfig() {
 	DBHost = os.Getenv("DB_HOST")
 	DBPort = os.Getenv("DB_PORT")
 	DBName = os.Getenv("DB_NAME")
@@ -38,11 +38,11 @@ func LoadDBConfig() {
 	DBPassword = os.Getenv("DB_PASSWORD")
 }
 
-func LoadAppConfig() {
+func loadAppConfig() {
 	Port = os.Getenv("SERVER_PORT")
 }
 
-func LoadAuthConfig() {
+func loadAuthConfig() {
 	JWTIssuer = os.Getenv("JWT_ISSUER")
 	JWTAudience = os.Getenv("JWT_AUDIENCE")
 	JWTSecret = os.Getenv("JWT_SECRET")
