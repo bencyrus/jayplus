@@ -13,5 +13,8 @@ func AuthRoutes(r *mux.Router, auth authContracts.AuthInterface, db dbContracts.
 	r.HandleFunc("/login", auth.LoginHandler).Methods("GET")
 	r.HandleFunc("/authenticate", func(w http.ResponseWriter, r *http.Request) {
 		auth.Authenticate(w, r, db)
-	})
+	}).Methods("POST")
+	r.HandleFunc("/refresh", func(w http.ResponseWriter, r *http.Request) {
+		auth.RefreshToken(w, r, db)
+	}).Methods("GET")
 }

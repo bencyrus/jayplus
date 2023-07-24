@@ -5,9 +5,12 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"strconv"
 
 	authContracts "backend/contracts/auth"
 	dbContracts "backend/contracts/db"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
@@ -58,4 +61,49 @@ func (a *Auth) Authenticate(w http.ResponseWriter, r *http.Request, db dbContrac
 	http.SetCookie(w, refreshCookie)
 
 	utils.WriteJSON(w, http.StatusAccepted, tokenPair)
+}
+
+func (a *Auth) RefreshToken(w http.ResponseWriter, r *http.Request, db dbContracts.DBInterface) {
+	for _, cookie := range r.Cookies() {
+		if cookie.Name == a.CookieName {
+			claims := &authContracts.JWTClaims{}
+			refreshToken := cookie.Value
+
+			_, err := jwt.ParseWithClaims(refreshToken, claims, func(token *jwt.Token) (any, error) {
+				return []byte(a.Secret), nil
+			})
+			if err != nil {
+				utils.ErrorJSON(w, errors.New("unauthorized"), http.StatusUnauthorized)
+				return
+			}
+
+			userID, err := strconv.Atoi(claims.Subject)
+			if err != nil {
+				utils.ErrorJSON(w, errors.New("unknown User"), http.StatusUnauthorized)
+				return
+			}
+
+			user, err := db.GetUserByID(userID)
+			if err != nil {
+				utils.ErrorJSON(w, errors.New("unknown User"), http.StatusUnauthorized)
+				return
+			}
+
+			u := authContracts.AuthUser{
+				ID:        user.ID,
+				FirstName: user.FirstName,
+				LastName:  user.LastName,
+			}
+
+			tokenPair, err := a.generateSignedTokenPair(&u)
+			if err != nil {
+				utils.ErrorJSON(w, errors.New("error generating token pair"), http.StatusInternalServerError)
+				return
+			}
+
+			http.SetCookie(w, a.getRefreshCookie(tokenPair.RefreshToken))
+
+			utils.WriteJSON(w, http.StatusOK, tokenPair)
+		}
+	}
 }
