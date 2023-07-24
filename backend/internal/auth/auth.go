@@ -33,7 +33,7 @@ func NewAuth() *Auth {
 	}
 }
 
-func (a *Auth) GenerateSignedTokenPair(user *authDomain.AuthUser) (authDomain.JWTTokenPair, error) {
+func (a *Auth) generateSignedTokenPair(user *authDomain.AuthUser) (authDomain.JWTTokenPair, error) {
 	if user == nil {
 		return authDomain.JWTTokenPair{}, fmt.Errorf("error generating token pair: user is nil")
 	}
@@ -74,7 +74,7 @@ func (a *Auth) GenerateSignedTokenPair(user *authDomain.AuthUser) (authDomain.JW
 	}, nil
 }
 
-func (a *Auth) GetRefreshCookie(refreshToken string) *http.Cookie {
+func (a *Auth) getRefreshCookie(refreshToken string) *http.Cookie {
 	return &http.Cookie{
 		Name:     a.CookieName,
 		Value:    refreshToken,
@@ -88,7 +88,7 @@ func (a *Auth) GetRefreshCookie(refreshToken string) *http.Cookie {
 	}
 }
 
-func (a *Auth) GetExpiredRefreshCookie() *http.Cookie {
+func (a *Auth) getExpiredRefreshCookie() *http.Cookie {
 	return &http.Cookie{
 		Name:     a.CookieName,
 		Value:    "",
@@ -104,7 +104,7 @@ func (a *Auth) GetExpiredRefreshCookie() *http.Cookie {
 }
 
 // password matches
-func PasswordMatches(user *models.User, password string) (bool, error) {
+func passwordMatches(user *models.User, password string) (bool, error) {
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if err != nil {
 		switch {

@@ -34,7 +34,7 @@ func (a *Auth) Authenticate(w http.ResponseWriter, r *http.Request, db db.DBInte
 		return
 	}
 
-	valid, err := PasswordMatches(user, reqPayload.Password)
+	valid, err := passwordMatches(user, reqPayload.Password)
 	if err != nil || !valid {
 		utils.ErrorJSON(w, errors.New("invalid login credentials"), http.StatusBadRequest)
 		return
@@ -48,13 +48,13 @@ func (a *Auth) Authenticate(w http.ResponseWriter, r *http.Request, db db.DBInte
 	}
 
 	// generate JWT tokens
-	tokenPair, err := a.GenerateSignedTokenPair(&u)
+	tokenPair, err := a.generateSignedTokenPair(&u)
 	if err != nil {
 		log.Fatalf("Error generating token pair: %v", err)
 	}
 
 	// set refresh cookie
-	refreshCookie := a.GetRefreshCookie(tokenPair.RefreshToken)
+	refreshCookie := a.getRefreshCookie(tokenPair.RefreshToken)
 	http.SetCookie(w, refreshCookie)
 
 	utils.WriteJSON(w, http.StatusAccepted, tokenPair)
