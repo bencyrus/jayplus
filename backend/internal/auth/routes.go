@@ -9,7 +9,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func AuthRoutes(r *mux.Router, auth authContracts.AuthHandlerInterface, db dbContracts.DBInterface) {
+func AuthRoutes(r *mux.Router, auth authContracts.AuthInterface, db dbContracts.DBInterface) {
 	authRouter := r.PathPrefix("/auth").Subrouter()
 
 	authRouter.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {

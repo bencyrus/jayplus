@@ -16,7 +16,7 @@ import (
 type App struct {
 	DB     dbContracts.DBInterface
 	Router *mux.Router
-	Auth   authContracts.AuthHandlerInterface
+	Auth   authContracts.AuthInterface
 }
 
 func NewApp() (*App, error) {

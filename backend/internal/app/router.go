@@ -10,6 +10,6 @@ import (
 func (app *App) SetupRouter() *mux.Router {
 	r := mux.NewRouter()
 	auth.AuthRoutes(r, app.Auth, app.DB)
-	booking.BookingRoutes(r)
+	booking.BookingRoutes(r, app.Auth)
 	return r
 }
