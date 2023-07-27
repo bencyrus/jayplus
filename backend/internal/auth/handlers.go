@@ -13,13 +13,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func (a *Auth) LoginHandler(w http.ResponseWriter, r *http.Request) {
-	// dummy handler
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("login handler"))
-}
-
-func (a *Auth) Authenticate(w http.ResponseWriter, r *http.Request, db dbContracts.DBInterface) {
+func (a *Auth) Login(w http.ResponseWriter, r *http.Request, db dbContracts.DBInterface) {
 	var reqPayload struct {
 		Email    string `json:"email"`
 		Password string `json:"password"`

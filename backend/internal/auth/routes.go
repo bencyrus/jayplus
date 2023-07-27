@@ -12,9 +12,8 @@ import (
 func AuthRoutes(r *mux.Router, auth authContracts.AuthHandlerInterface, db dbContracts.DBInterface) {
 	authRouter := r.PathPrefix("/auth").Subrouter()
 
-	authRouter.HandleFunc("/login", auth.LoginHandler).Methods("GET")
-	authRouter.HandleFunc("/authenticate", func(w http.ResponseWriter, r *http.Request) {
-		auth.Authenticate(w, r, db)
+	authRouter.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
+		auth.Login(w, r, db)
 	}).Methods("POST")
 	authRouter.HandleFunc("/refresh", func(w http.ResponseWriter, r *http.Request) {
 		auth.RefreshToken(w, r, db)

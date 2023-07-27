@@ -6,8 +6,7 @@ import (
 )
 
 type AuthHandlerInterface interface {
-	LoginHandler(w http.ResponseWriter, r *http.Request)
-	Authenticate(w http.ResponseWriter, r *http.Request, db dbContracts.DBInterface)
+	Login(w http.ResponseWriter, r *http.Request, db dbContracts.DBInterface)
 	RefreshToken(w http.ResponseWriter, r *http.Request, db dbContracts.DBInterface)
 	Logout(w http.ResponseWriter, r *http.Request)
 }
