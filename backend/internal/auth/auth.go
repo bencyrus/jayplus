@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	authContracts "backend/contracts/auth"
@@ -103,7 +104,6 @@ func (a *Auth) getExpiredRefreshCookie() *http.Cookie {
 
 }
 
-// password matches
 func passwordMatches(user *models.User, password string) (bool, error) {
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if err != nil {
@@ -116,4 +116,44 @@ func passwordMatches(user *models.User, password string) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func (a *Auth) getHeaderFromTokenAndVerify(w http.ResponseWriter, r *http.Request) (string, *authContracts.JWTClaims, error) {
+	w.Header().Add("Vary", "Authorization")
+
+	authorizationHeader := r.Header.Get("Authorization")
+	if authorizationHeader == "" {
+		return "", nil, errors.New("missing Authorization header")
+	}
+
+	headerParts := strings.Split(authorizationHeader, " ")
+	if len(headerParts) != 2 {
+		return "", nil, errors.New("invalid Authorization header")
+	}
+
+	if headerParts[0] != "Bearer" {
+		return "", nil, errors.New("invalid Authorization header")
+	}
+
+	token := headerParts[1]
+
+	claims := &authContracts.JWTClaims{}
+	_, err := jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (any, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(a.Secret), nil
+	})
+	if err != nil {
+		if strings.HasPrefix(err.Error(), "token is expired by") {
+			return "", nil, errors.New("token is expired")
+		}
+		return "", nil, err
+	}
+
+	if claims.Issuer != a.Issuer {
+		return "", nil, errors.New("invalid token issuer")
+	}
+
+	return token, claims, nil
 }

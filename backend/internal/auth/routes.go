@@ -9,15 +9,17 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func AuthRoutes(r *mux.Router, auth authContracts.AuthInterface, db dbContracts.DBInterface) {
-	r.HandleFunc("/login", auth.LoginHandler).Methods("GET")
-	r.HandleFunc("/authenticate", func(w http.ResponseWriter, r *http.Request) {
+func AuthRoutes(r *mux.Router, auth authContracts.AuthHandlerInterface, db dbContracts.DBInterface) {
+	authRouter := r.PathPrefix("/auth").Subrouter()
+
+	authRouter.HandleFunc("/login", auth.LoginHandler).Methods("GET")
+	authRouter.HandleFunc("/authenticate", func(w http.ResponseWriter, r *http.Request) {
 		auth.Authenticate(w, r, db)
 	}).Methods("POST")
-	r.HandleFunc("/refresh", func(w http.ResponseWriter, r *http.Request) {
+	authRouter.HandleFunc("/refresh", func(w http.ResponseWriter, r *http.Request) {
 		auth.RefreshToken(w, r, db)
 	}).Methods("GET")
-	r.HandleFunc("/logout", func(w http.ResponseWriter, r *http.Request) {
+	authRouter.HandleFunc("/logout", func(w http.ResponseWriter, r *http.Request) {
 		auth.Logout(w, r)
 	}).Methods("GET")
 }
